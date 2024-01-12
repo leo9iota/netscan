@@ -3,8 +3,8 @@ from scapy.sendrecv import srp
 import socket
 import nmap
 
-# Define the target Wi-Fi network range
-wifi_network = "192.168.1.0/24"  # Update this to your office Wi-Fi network range
+# Define the target IP address (for a single host)
+target_ip = "192.168.1.222"  # The specific IP address you want to scan
 
 # Create an Nmap scanner
 nm = nmap.PortScanner()
@@ -21,21 +21,24 @@ def scan(ip):
         # Extract MAC addresses and perform an Nmap scan
         for element in answered_list:
             mac_address = element[1].hwsrc
-            ip_address = element[1].psrc
+            host_ip = element[1].psrc  # Renamed to avoid shadowing
 
             # Perform an Nmap scan to gather more information
-            nm.scan(hosts=ip_address, arguments="-O")
+            nm.scan(hosts=host_ip, arguments="-O")
 
-            # Retrieve device type from Nmap results
-            device_type = (
-                nm[ip_address]["osclass"][0]["osfamily"]
-                if ip_address in nm.all_hosts()
-                else "Unknown"
-            )
+            # Check if 'osclass' information is available in the Nmap results
+            if "osclass" in nm[host_ip]:
+                device_type = (
+                    nm[host_ip]["osclass"][0]["osfamily"]
+                    if "osfamily" in nm[host_ip]["osclass"][0]
+                    else "Unknown"
+                )
+            else:
+                device_type = "Unknown"
 
             # Print the gathered information
             print(
-                f"IP Address: {ip_address}, MAC Address: {mac_address}, Device Type: {device_type}"
+                f"IP Address: {host_ip}, MAC Address: {mac_address}, Device Type: {device_type}"
             )
 
     except KeyboardInterrupt:
@@ -44,13 +47,11 @@ def scan(ip):
     except socket.gaierror:
         print("Hostname could not be resolved.")
         exit()
+    except KeyError as e:
+        print(f"An error occurred: {e}")
     except Exception as e:
-        print(f"An error occurred: {str(e)}")
-
-
-def scan_network(target_network):
-    scan(target_network)
+        print(f"An unexpected error occurred: {str(e)}")
 
 
 if __name__ == "__main__":
-    scan_network(wifi_network)
+    scan(target_ip)
