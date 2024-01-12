@@ -20,39 +20,38 @@ def scan(ip_range):
         arp_request_broadcast = broadcast / arp_request
         answered_list, _ = srp(arp_request_broadcast, timeout=2, verbose=False)
 
+        # Prepare the results list
+        results = []
+
+        # Iterate over the list of IPs that responded
         for _, received in answered_list:
             ip_address = received.psrc
             mac_address = received.hwsrc
 
-            print(f"IP Address: {ip_address}, MAC Address: {mac_address}")
-
             # Perform an Nmap scan with OS detection
-            nm.scan(
-                hosts=ip_address, arguments="-O -sV"
-            )  # -O for OS detection, -sV for service version
+            nm.scan(hosts=ip_address, arguments="-O -sV")
 
-            # Check if the host is up and print OS information
+            # Check if the host is up and prepare OS information
             if nm.all_hosts() and "up" in nm[ip_address].state():
-                print(f"Host {ip_address} is up.")
-
-                # Print OS details if available
+                os_info = []
                 if "osmatch" in nm[ip_address]:
                     for osmatch in nm[ip_address]["osmatch"]:
-                        print(
-                            f"Possible OS: {osmatch['name']}, Accuracy: {osmatch['accuracy']}%"
-                        )
-                        if "osclass" in osmatch:
-                            for osclass in osmatch["osclass"]:
-                                print(
-                                    f"Type: {osclass['type']}, Vendor: {osclass['vendor']}, OS Family: {osclass['osfamily']}, OS Generation: {osclass['osgen']}"
-                                )
+                        os_info.append(f"{osmatch['name']} ({osmatch['accuracy']}%)")
+                else:
+                    os_info.append("Not Detected")
+
+                results.append([ip_address, mac_address, "\n".join(os_info)])
+
+        # Print the results in a table
+        headers = ["IP Address", "MAC Address", "Possible OS"]
+        print(colored(tabulate(results, headers=headers, tablefmt="grid"), "green"))
 
     except KeyboardInterrupt:
-        print("\nScanning stopped by user.")
+        print(colored("\nScanning stopped by user.", "red"))
     except socket.gaierror:
-        print("Hostname could not be resolved.")
+        print(colored("Hostname could not be resolved.", "red"))
     except Exception as e:
-        print(f"An error occurred: {str(e)}")
+        print(colored(f"An error occurred: {str(e)}", "red"))
 
 
 # Scan the network
