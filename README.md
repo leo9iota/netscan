@@ -12,5 +12,5 @@
 ```sh
 git clone https://github.com/lk9iota/netscan
 cd netscan
-python install_requirements.py
+python install.py
 ```
