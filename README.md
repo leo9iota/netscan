@@ -1,4 +1,4 @@
-# WiFi Scanner
+# Netscan
 
 ## Prerequisites
 
@@ -10,7 +10,7 @@
 2. Clone the repository and install the dependencies.
 
 ```sh
-git clone https://github.com/lk9iota/wifi-scanner
-cd wifi-scanner
+git clone https://github.com/lk9iota/netscan
+cd netscan
 python install_requirements.py
 ```
