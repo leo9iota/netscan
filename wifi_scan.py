@@ -1,5 +1,7 @@
 from scapy.layers.l2 import ARP, Ether
 from scapy.sendrecv import srp
+from tabulate import tabulate
+from termcolor import colored
 import socket
 import nmap
 
