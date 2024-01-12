@@ -18,19 +18,32 @@ def scan(ip_range):
         arp_request_broadcast = broadcast / arp_request
         answered_list, _ = srp(arp_request_broadcast, timeout=2, verbose=False)
 
-        # Iterate over the list of IPs that responded
         for _, received in answered_list:
             ip_address = received.psrc
             mac_address = received.hwsrc
 
             print(f"IP Address: {ip_address}, MAC Address: {mac_address}")
 
-            # Perform an Nmap scan to gather more information (optional)
-            nm.scan(hosts=ip_address, arguments="-sn")  # -sn for ping scan
+            # Perform an Nmap scan with OS detection
+            nm.scan(
+                hosts=ip_address, arguments="-O -sV"
+            )  # -O for OS detection, -sV for service version
 
-            # Check if the host is up based on Nmap scan
+            # Check if the host is up and print OS information
             if nm.all_hosts() and "up" in nm[ip_address].state():
                 print(f"Host {ip_address} is up.")
+
+                # Print OS details if available
+                if "osmatch" in nm[ip_address]:
+                    for osmatch in nm[ip_address]["osmatch"]:
+                        print(
+                            f"Possible OS: {osmatch['name']}, Accuracy: {osmatch['accuracy']}%"
+                        )
+                        if "osclass" in osmatch:
+                            for osclass in osmatch["osclass"]:
+                                print(
+                                    f"Type: {osclass['type']}, Vendor: {osclass['vendor']}, OS Family: {osclass['osfamily']}, OS Generation: {osclass['osgen']}"
+                                )
 
     except KeyboardInterrupt:
         print("\nScanning stopped by user.")
