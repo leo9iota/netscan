@@ -1,7 +1,7 @@
-from scapy.all import ARP, Ether, srp
+from scapy.layers.l2 import ARP, Ether
+from scapy.sendrecv import srp
 import socket
 import nmap
-from ipaddress import ip_network
 
 # Define the target network range
 network_range = "192.168.1.0/24"  # Adjust to the network range you want to scan
