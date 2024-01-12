@@ -1,36 +1,16 @@
-# Hackathon 2024
+# WiFi Scanner
 
 ## Prerequisites
 
-### Libraries
+1. Install the following programs.
+   - [Python](https://www.python.org/downloads/)
+   - [Nmap](https://nmap.org/download.html)
+   - [Npcap](https://npcap.com/#download)
 
-1. Install the **scapy** library
-
-```sh
-pip install scapy
-```
-
-2. Install the **python-nmap** library
+2. Clone the repository and install the dependencies.
 
 ```sh
-pip install python-nmap
-
+git clone https://github.com/lk9iota/wifi-scanner
+cd wifi-scanner
+python install_requirements.py
 ```
-
-3. Install the **tabulate** library
-
-```sh
-pip install tabulate
-```
-
-4. Install the **termcolor** library
-
-```sh
-pip install termcolor
-```
-
-### Binaries
-
-- [Python](https://www.python.org/downloads/)
-- [Nmap](https://nmap.org/download.html)
-- [Npcap](https://npcap.com/#download)
