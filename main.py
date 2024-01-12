@@ -13,6 +13,7 @@ def main():
     # Create an instance of TerminalPrinter
     printer = TerminalPrinter()
     printer.print_results(results)
+    printer.print_banner()
 
 
 if __name__ == "__main__":
